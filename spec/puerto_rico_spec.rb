@@ -1,74 +1,83 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-def load_ship(ship, barrels, goods)
-  if will_accept_goods?(ship, goods)
-    raise "Cannot load a different type of goods onto a partially loaded ship"
+class Ship
+  attr_reader :spaces, :barrels, :goods
+
+  def initialize(args)
+    @spaces  = args[:spaces]
+    @barrels = args[:barrels] || 0
+    @goods   = args[:goods]
   end
 
-  if full?(ship)
-    raise "Cannot load a fully loaded ship"
+  def free_spaces
+    spaces - barrels
   end
 
-  new_barrels = ship[:barrels] + barrels_to_load(ship, barrels)
+  def full?
+    free_spaces == 0
+  end
 
-  [ship.merge(:goods => goods, :barrels => new_barrels), 
-   remaining_barrels(ship, barrels)]
-end
+  def accepting?(goods)
+    @goods.nil? || @goods == goods
+  end
 
-def full?(ship)
-  free_spaces(ship) == 0
-end
+  def barrels_to_load(number_of_barrels)
+    number_of_barrels > free_spaces ? free_spaces : number_of_barrels
+  end
 
-def will_accept_goods?(ship, goods)
-  ship[:goods] && ship[:goods] != goods
-end
+  def remaining_barrels(number_of_barrels)
+    number_of_barrels > free_spaces ? number_of_barrels - free_spaces : 0
+  end
 
-def free_spaces(ship)
-  ship[:spaces] - ship[:barrels]
-end
+  def load(barrels, load_goods)
+    return :wrong_goods unless accepting?(goods)
+    return :full_ship if full?
 
-def barrels_to_load(ship, barrels)
-  spaces = free_spaces(ship)
-  barrels > spaces ? spaces : barrels
-end
+    [add_barrels(barrels_to_load(barrels), load_goods),
+     remaining_barrels(barrels)]
+  end
 
-def remaining_barrels(ship, barrels)
-  spaces = free_spaces(ship)
-  barrels > spaces ? barrels - spaces : 0
+  private
+
+  def add_barrels(new_barrels, load_goods)
+    self.class.new(:spaces => @spaces, 
+                   :goods => load_goods, 
+                   :barrels => @barrels + new_barrels)
+  end
 end
 
 describe "Loading a ship" do
   it "loads all barrels onto an empty ship" do
-    ship = {:spaces => 5, :barrels => 0}
-    ship, remaining_barrels = load_ship(ship, 1, :indigo)
+    ship = Ship.new(:spaces => 5)
+    ship, remaining_barrels = ship.load(1, :indigo)
     
-    ship[:barrels].should == 1
+    ship.barrels.should == 1
     remaining_barrels.should == 0
   end
 
   it "loads all barrels possible onto an empty ship" do
-    ship = {:spaces => 5, :barrels => 0}
-    ship, remaining_barrels = load_ship(ship, 7, :indigo)
+    ship = Ship.new(:spaces => 5)
+    ship, remaining_barrels = ship.load(7, :indigo)
     
-    ship[:barrels].should == 5
+    ship.barrels.should == 5
     remaining_barrels.should == 2
   end
 
   it "loads all barrels possible onto a partially full ship" do
-    ship = {:spaces => 5, :barrels => 3}
-    ship, remaining_barrels = load_ship(ship, 7, :indigo)
+    ship = Ship.new(:spaces => 5, :barrels => 3, :goods => :indigo)
+    ship, remaining_barrels = ship.load(7, :indigo)
     
-    ship[:barrels].should == 5
+    ship.barrels.should == 5
     remaining_barrels.should == 5
   end
 
-  it "raises an error if you try and load the wrong type of goods" do
-    ship = {:spaces => 5, :barrels => 3, :goods => :coffee}
-    expect { load_ship(ship, 7, :indigo) }.to raise_error
+  it "returns an error if you try and load the wrong type of goods" do
+    ship = Ship.new(:spaces => 5, :barrels => 3, :goods => :coffee)
+    ship.load(7, :indigo).should == :wrong_goods
   end
 
-  it "raises an error if you try and load a full ship" do
-    ship = {:spaces => 5, :barrels => 5, :goods => :indigo}
-    expect { load_ship(ship, 1, :indigo) }.to raise_error
+  it "returns an error if you try and load a full ship" do
+    ship = Ship.new(:spaces => 5, :barrels => 5, :goods => :indigo)
+    ship.load(1, :indigo).should == :full_ship
   end
 end
