@@ -9,7 +9,7 @@ class Barrel < ImmutableStruct.new(:quantity, :goods_type)
   end
   
   def +(other)
-    unless other.goods_type == goods_type
+    unless same_type?(other)
       raise GoodsTypeMismatch.new("Cannot add barrels of #{other.goods_type} to barrels of #{goods_type}")
     end
     
@@ -17,7 +17,7 @@ class Barrel < ImmutableStruct.new(:quantity, :goods_type)
   end
 
   def -(other)
-    unless other.goods_type == goods_type
+    unless same_type?(other)
       raise GoodsTypeMismatch.new("Cannot subtract barrels of #{other.goods_type} from barrels of #{goods_type}")
     end
 
@@ -53,8 +53,7 @@ module BarrelFactoryMethods
   def barrels_of(goods_type)
     Barrel.new(self, goods_type)
   end
-  alias :barrel_of :barrels_of
-  
+  alias :barrel_of :barrels_of  
 end
 
 class Integer
