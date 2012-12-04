@@ -1,6 +1,7 @@
 source "http://rubygems.org"
 
 gem "immutable_struct"
+gem "hamster"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
