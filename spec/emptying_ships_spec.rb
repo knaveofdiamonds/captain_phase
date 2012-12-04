@@ -1,17 +1,5 @@
 require 'spec_helper'
 
-def create_ships(number_of_players)
-  smallest = number_of_players + 1
-  largest  = number_of_players + 3
-  (smallest..largest).map {|i| Ship.new(i) }
-end
-
-def empty_full_ships(ships)
-  ships.map do |ship|
-    ship.full? ? Ship.new(ship.spaces) : ship
-  end
-end
-
 describe "emptying ships" do
   it "returns an array of ships - full ships become empty" do
     ships = [Ship.new(5),
