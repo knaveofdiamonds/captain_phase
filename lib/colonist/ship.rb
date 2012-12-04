@@ -1,7 +1,33 @@
 class Ship
   class LoadingResult < ImmutableStruct.new(:ship, :loaded_barrels, :remaining_barrels)
   end
+
+  class LoadingVictoryPoints
+    CAPTAIN_BONUS = 1
   
+    attr_reader :load_results
+    
+    def initialize(load_results)
+      @load_results = load_results
+    end
+    
+    def calculate(*method_names)
+      method_names.map {|m| method(m).call }.inject(:+)
+    end
+    
+    def basic_points
+      load_results.map(&:loaded_barrels).map(&:quantity).inject(:+) || 0
+    end
+    
+    def captain_points
+      load_results.empty? ? 0 : CAPTAIN_BONUS
+    end
+    
+    def harbor_points
+      load_results.size
+    end
+  end
+
   attr_reader :spaces, :barrels
 
   def initialize(spaces, barrels=nil)
