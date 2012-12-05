@@ -1,19 +1,51 @@
-= puerto_rico
+= Captain's Phase in Puerto Rico
 
-Description goes here.
+A kata for the captain's phase in the board game Puerto Rico.
 
-== Contributing to puerto_rico
- 
-* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
-* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
-* Fork the project.
-* Start a feature/bugfix branch.
-* Commit and push until you are happy with your contribution.
-* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
-* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+== Spec.
 
-== Copyright
+* There are n ships, with i,j,k... spaces for barrels of goods.
 
-Copyright (c) 2012 Roland Swingler. See LICENSE.txt for
-further details.
+* There are m players, with x,y,z... number of barrels of goods of different types.
 
+* The goods are: indigo, corn, tobacco, sugar, coffee.
+
+* A ship can only be loaded if there is space on the ship - 1 space
+  for 1 barrel.
+
+* Each ship can only have one type of goods on it.
+
+* In a round:
+
+  - Players load ships one type of good at a time, in turn, until no
+    more players can load goods.
+
+  - Players may choose which type of goods they load, and which ship
+    they load, but must load as many barrels as they can onto their
+    chosen ship. Players must load goods if they can load goods.
+
+  - Players get 1 Victory Point for each good loaded
+
+  - At the end of the round, players discard all but 1 of their goods
+    barrels that aren't on a ship.
+
+  - At the end of the round, any full ships are emptied.
+
+* Players may have buildings, which have the following effects:
+
+  - If a player has a harbour, they get 1 extra victory point each time
+    they load a ship
+
+  - If a player has a wharf, they have their own private ship to load
+    goods on to once. Victory points are scored as normal. No other
+    player may load on this ship, and this ship has no maximum number
+    of barrels that may be loaded.
+
+  - If a player has a small warehouse, they may retain as much of one
+    type of material after loading as they like
+
+  - If a player has a large warehouse, they may retain as much of two
+    types of material after loading as they like
+
+* Players may have multiple buildings, including multiples of the same
+  type of building.
