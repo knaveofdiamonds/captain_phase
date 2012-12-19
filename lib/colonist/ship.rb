@@ -1,5 +1,18 @@
 class Ship
+  def self.victory_points(*args)
+    LoadingVictoryPoints.new(*args).calculate
+  end
+
+  def self.outcomes(ships, barrels)
+    LoadingOutcomes.new(ships, barrels).outcomes
+  end
+
   class LoadingResult < ImmutableStruct.new(:ship, :loaded_barrels, :remaining_barrels)
+    include Comparable
+
+    def <=>(other)
+      loaded_barrels <=> other.loaded_barrels
+    end
   end
 
   class LoadingVictoryPoints
@@ -7,8 +20,8 @@ class Ship
   
     attr_reader :barrels
     
-    def initialize(barrels)
-      @barrels = barrels
+    def initialize(*barrels)
+      @barrels = barrels.flatten
     end
     
     def calculate(*method_names)
@@ -26,6 +39,26 @@ class Ship
     
     def harbor_points
       barrels.size
+    end
+  end
+
+  class LoadingOutcomes
+    attr_reader :outcomes
+
+    def initialize(ships, barrels)
+      @outcomes = ships.product(barrels).map do |(ship, barrel)| 
+        ship.load(barrel)
+      end.select {|result| valid_result?(result) }
+    end
+
+    def possible_to_load?
+      ! outcomes.empty?
+    end
+
+    private
+
+    def valid_result?(result)
+      !result.kind_of?(Symbol)
     end
   end
 
