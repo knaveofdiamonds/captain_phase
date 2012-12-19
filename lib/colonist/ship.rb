@@ -5,10 +5,10 @@ class Ship
   class LoadingVictoryPoints
     CAPTAIN_BONUS = 1
   
-    attr_reader :load_results
+    attr_reader :barrels
     
-    def initialize(load_results)
-      @load_results = load_results
+    def initialize(barrels)
+      @barrels = barrels
     end
     
     def calculate(*method_names)
@@ -17,15 +17,15 @@ class Ship
     end
     
     def basic_points
-      load_results.map(&:quantity).inject(:+) || 0
+      number_of_barrels(barrels)
     end
     
     def captain_points
-      load_results.empty? ? 0 : CAPTAIN_BONUS
+      barrels.empty? ? 0 : CAPTAIN_BONUS
     end
     
     def harbor_points
-      load_results.size
+      barrels.size
     end
   end
 

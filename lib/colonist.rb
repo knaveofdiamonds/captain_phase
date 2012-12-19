@@ -14,3 +14,11 @@ def empty_full_ships(ships)
     ship.full? ? Ship.new(ship.spaces) : ship
   end
 end
+
+def number_of_barrels(barrels)
+  barrels.map(&:quantity).inject(:+) || 0
+end
+
+def valid_number_of_barrels_to_retain?(barrels, wharf_spaces=0)
+  barrels.size <= wharf_spaces || number_of_barrels(barrels) <= 1
+end
