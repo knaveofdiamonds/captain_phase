@@ -6,14 +6,12 @@ describe Ship::LoadingVictoryPoints do
   end
 
   it "returns 1 point per barrel loaded from a loading result" do
-    results = [Ship::LoadingResult.new(:loaded_barrels => 3.barrels_of(:indigo))]
+    results = [3.barrels_of(:indigo)]
     described_class.new(results).basic_points.should == 3
   end
 
   it "returns 1 point per barrel loaded from multiple loading results" do
-    results = [Ship::LoadingResult.new(:loaded_barrels => 3.barrels_of(:indigo)),
-               Ship::LoadingResult.new(:loaded_barrels => 3.barrels_of(:indigo))]
-
+    results = [3.barrels_of(:indigo), 3.barrels_of(:indigo)]
     described_class.new(results).basic_points.should == 6
   end
 
@@ -23,26 +21,24 @@ describe Ship::LoadingVictoryPoints do
     end
     
     it "returns 1 extra point if loading has happened" do
-      result = [Ship::LoadingResult.new(:loaded_barrels => 3.barrels_of(:indigo))]
+      result = [3.barrels_of(:indigo)]
       described_class.new(result).captain_points.should == 1
     end
   end
 
   describe "with a harbor" do
     it "returns 1 extra point for each loading" do
-      results = [Ship::LoadingResult.new(:loaded_barrels => 3.barrels_of(:indigo)),
-                 Ship::LoadingResult.new(:loaded_barrels => 3.barrels_of(:indigo))]
-      
+      results = [3.barrels_of(:indigo), 3.barrels_of(:indigo)]
       described_class.new(results).harbor_points.should == 2
     end
   end
 
   it "calculates the sum of all points" do
-    results = [Ship::LoadingResult.new(:loaded_barrels => 3.barrels_of(:indigo)),
-               Ship::LoadingResult.new(:loaded_barrels => 3.barrels_of(:indigo))]
-      
+    results = [3.barrels_of(:indigo), 3.barrels_of(:indigo)]
     described_class.new(results).
-      calculate(:basic_points, :captain_points, :harbor_points, :harbor_points).
+      calculate(:captain,
+                :harbor,
+                :harbor).
       should == 6 + 1 + 2 + 2
   end
 end

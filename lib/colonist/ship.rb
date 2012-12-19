@@ -12,11 +12,12 @@ class Ship
     end
     
     def calculate(*method_names)
-      method_names.map {|m| method(m).call }.inject(:+)
+      method_names.unshift :basic
+      method_names.map {|m| method("#{m}_points".to_sym).call }.inject(:+)
     end
     
     def basic_points
-      load_results.map(&:loaded_barrels).map(&:quantity).inject(:+) || 0
+      load_results.map(&:quantity).inject(:+) || 0
     end
     
     def captain_points
